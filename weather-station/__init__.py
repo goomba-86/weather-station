@@ -1,4 +1,5 @@
-from xml.etree import ElementTree
+from lxml.etree import ElementTree
+from lxml import etree
 import requests
 from weather_data_value import WeatherDataValue
 
@@ -12,11 +13,11 @@ def read_raw_weather_data():
         "place=espoo&"
     )
     weather_data = requests.get(request_string)
-    return weather_data.text
+    return weather_data.content
 
 
 def parse_raw_weather_data(raw_weather_data):
-    root = ElementTree.fromstring(raw_weather_data)
+    root = etree.fromstring(raw_weather_data)
 
     wfs = "{http://www.opengis.net/wfs/2.0}"
     bswfs = "{http://xml.fmi.fi/schema/wfs/2.0}"
@@ -111,3 +112,6 @@ def weather_symbol_3_to_string(symbol):
 
 raw_data = read_raw_weather_data()
 temp = parse_raw_weather_data(raw_data)
+
+for t in temp:
+    print(f"{t.get_datetime()} {t.get_temperature()} {t.get_weather_symbol()}")
